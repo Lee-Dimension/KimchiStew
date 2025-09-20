@@ -14,7 +14,6 @@
       <div class="flex flex-col items-center flex-1">
         <label for="region" class="mb-2 font-bold text-[#767676] w-25 text-left">지역</label>
         <select id="region" v-model="region" class="p-1 border-b w-25 text-[#767676]">
-          <option selected disabled value=""></option>
           <option value="서울">서울</option>
           <option value="부산">부산</option>
           <option value="인천">인천</option>
@@ -25,7 +24,6 @@
       <div class="flex flex-col items-center flex-1">
         <label for="site" class="mb-2 font-bold text-[#767676] w-25 text-left">현장</label>
         <select id="site" v-model="site" class="p-1 border-b w-25 text-[#767676]">
-          <option selected disabled value=""></option>
           <option value="성수동">성수동</option>
           <option value="수영동">수영동</option>
           <option value="대곡동">대곡동</option>

@@ -51,26 +51,31 @@
       </main>
 
       <footer class="mt-35">
-        <div class="flex justify-between items-center w-full p-5 bg-[#FFEC17] rounded-2xl cursor-pointer">
-          <div>
-            <p class="text-lg font-bold text-[#1D1A05]">안전 시험</p>
-            <p class="text-sm font-bold mt-1">
-              <span class="text-gray-500">미응시</span>
-            </p>
+        <div @click="checkTestEligibility" :class="['flex justify-between items-center w-full p-5 rounded-2xl', testStatus === 'pass' ? 'cursor-not-allowed' : 'cursor-pointer', 'bg-[#FFEC17]']">
+            <div>
+              <p class="text-lg font-bold text-[#1D1A05]">안전 시험</p>
+              <p class="text-sm font-bold mt-1">
+                <span v-if="testStatus === 'none'" class="text-gray-500">미응시</span>
+                <span v-else-if="testStatus === 'pass'" class="text-blue-500">합격</span>
+                <span v-else-if="testStatus === 'fail'" class="text-red-500">불합격</span>
+              </p>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" :stroke="'#1D1A05'" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
           </div>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="#1D1A05" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-          </svg>
-        </div>
       </footer>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, onActivated } from 'vue'
+import { useRouter } from 'vue-router'
 
-const user = ref(null)
+const router = useRouter()
+
+const user = computed(() => { const storedUser = sessionStorage.getItem('loggedInUser'); return storedUser ? JSON.parse(storedUser) : null })
 const showPopup = ref(false)
 
 const basicEducationStatus = computed(() => {
@@ -85,7 +90,7 @@ const regularEducationStatus = computed(() => {
     return 'none' // Not completed
   }
 
-  const today = new Date('2025-09-20')
+  const today = new Date()
   const completionDateStr = user.value.educationCompletionDate
   const [year, month, day] = completionDateStr.split('-').map(Number)
   const completionDate = new Date(`20${year}`, month - 1, day)
@@ -100,27 +105,47 @@ const regularEducationStatus = computed(() => {
   }
 })
 
-const popupMessage = computed(() => {
-  if (regularEducationStatus.value === 'expired') {
-    return '재교육 대상자입니다.'
-  }
-  if (regularEducationStatus.value === 'none') {
-    return '기초교육 대상자입니다.'
-  }
-  return ''
+const testStatus = computed(() => {
+  if (!user.value || !user.value.test) return 'none' // 'none' for not taken
+  if (user.value.test === 'pass') return 'pass'
+  if (user.value.test === 'nonepass') return 'fail'
+  return 'none' // Default to 'none' if unexpected value
 })
 
+const popupMessage = ref('')
+
+
+
 onMounted(() => {
-  const storedUser = sessionStorage.getItem('loggedInUser')
-  if (storedUser) {
-    user.value = JSON.parse(storedUser)
-    if (regularEducationStatus.value === 'expired' || regularEducationStatus.value === 'none') {
+  // The user computed property will automatically get the latest.
+  // We still need to check for initial popups.
+  if (user.value) { // Check if a user is logged in
+    if (regularEducationStatus.value === 'expired') {
+      popupMessage.value = '재교육 대상자입니다.'
+      showPopup.value = true
+    } else if (regularEducationStatus.value === 'none') {
+      popupMessage.value = '기초교육 대상자입니다.'
       showPopup.value = true
     }
-  } else {
-    // router.push('/') // Or handle error
   }
 })
+
+
+const checkTestEligibility = () => {
+  if (basicEducationStatus.value === 'none') {
+    popupMessage.value = '기초교육을 완수해야합니다.'
+    showPopup.value = true
+    return
+  }
+
+  if (testStatus.value === 'pass') {
+    // Already passed, do nothing (button is visually disabled)
+    return
+  }
+
+  // Eligible to take/retake test
+  router.push('/test')
+}
 </script>
 
 <style scoped>

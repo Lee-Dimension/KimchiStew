@@ -2,7 +2,7 @@
   <div class="bg-[#FFFEEF] min-h-screen">
     <div class="w-full max-w-sm mx-auto p-5 font-sans">
       <header class="flex justify-between items-center w-full">
-        <p v-if="user" class="font-bold text-[#78711D]">{{ user.name }}님 환영합니다</p>
+        <p v-if="user" class="font-bold text-sm text-[#78711D]">{{ user.name }}님 환영합니다</p>
         <button @click="logout" class="font-bold text-[#78711D] text-sm">로그아웃</button>
       </header>
 
@@ -44,7 +44,7 @@ const user = ref(null)
 const pressTimer = ref(null)
 const gaugeInterval = ref(null)
 const gaugeWidth = ref(0)
-const pressDuration = 2000 // 2 seconds
+const pressDuration = 1500 // 1.5 seconds
 
 onMounted(() => {
   const storedUser = sessionStorage.getItem('loggedInUser')

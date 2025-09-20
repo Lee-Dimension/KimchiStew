@@ -20,11 +20,11 @@ const adminRoutes = [
     component: () => import('@/views/admin/AdminPlus.vue'),
   },
 
-  // 관리자 교육 추가
+  // 관리자 명단 관리
   {
-    path: '/adminAddEdu',
-    name: 'AdminAddEdu',
-    component: () => import('@/views/admin/AdminAddEdu.vue'),
+    path: '/adminedit',
+    name: 'AdminEditList',
+    component: () => import('@/views/admin/AdminEditList.vue'),
   },
 ]
 

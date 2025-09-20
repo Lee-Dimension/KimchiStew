@@ -14,12 +14,6 @@ const router = createRouter({
 
     // 관리자 라우터 / admin.js
     ...adminRoutes,
-
-    {
-      path: '/what',
-      name: 'What',
-      component: () => import('@/views/what.vue'),
-    },
   ],
 })
 

@@ -29,6 +29,14 @@ const userRoutes = [
     name: 'Clear',
     component: () => import('@/views/user/Clear.vue'),
   },
+  // 시험
+  {
+    path: '/test',
+    name: 'Test',
+    component: () => import('@/views/user/Test.vue'),
+  },
+  // 결과
+  {},
 ]
 
 export default userRoutes

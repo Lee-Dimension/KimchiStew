@@ -23,14 +23,14 @@
 import { ref } from 'vue'
 
 const accidentTypes = ref([
-  { name: '추락', img: '/clear/falling.png', link: '/falling' },
-  { name: '끼임', img: '/clear/collapse.png', link: '/collapse' },
-  { name: '감전', img: '/clear/elect.png', link: '/electrocution' },
-  { name: '넘어짐', img: '/clear/fall.png', link: '/fall' },
-  { name: '낙하물', img: '/clear/hit.png', link: '/hit' },
-  { name: '열사병·탈진', img: '/clear/sun.png', link: '/sun' },
-  { name: '화재', img: '/clear/fire.png', link: '/fire' },
-  { name: '붕괴', img: '/clear/break.png', link: '/break' },
+  { name: '추락', img: import.meta.env.BASE_URL + 'clear/falling.png', link: '/falling' },
+  { name: '끼임', img: import.meta.env.BASE_URL + 'clear/collapse.png', link: '/collapse' },
+  { name: '감전', img: import.meta.env.BASE_URL + 'clear/elect.png', link: '/electrocution' },
+  { name: '넘어짐', img: import.meta.env.BASE_URL + 'clear/fall.png', link: '/fall' },
+  { name: '낙하물', img: import.meta.env.BASE_URL + 'clear/hit.png', link: '/hit' },
+  { name: '열사병·탈진', img: import.meta.env.BASE_URL + 'clear/sun.png', link: '/sun' },
+  { name: '화재', img: import.meta.env.BASE_URL + 'clear/fire.png', link: '/fire' },
+  { name: '붕괴', img: import.meta.env.BASE_URL + 'clear/break.png', link: '/break' },
 ])
 </script>
 

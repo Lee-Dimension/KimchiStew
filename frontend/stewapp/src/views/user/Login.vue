@@ -11,10 +11,10 @@
     </router-link>
 
     <!-- 지역/현장 -->
-    <div class="flex justify-between w-full px-5 mb-3">
+    <div class="flex justify-center gap-4 w-full px-5 mb-3">
       <!-- 지역 -->
-      <div class="flex flex-col items-start">
-        <label for="region" class="mb-2 font-bold text-[#767676]">지역</label>
+      <div class="flex flex-col items-center flex-1">
+        <label for="region" class="mb-2 font-bold text-[#767676] w-25 text-left">지역</label>
         <select id="region" class="p-1 border-b w-25 text-[#767676]">
           <option selected disabled></option>
           <option value="seoul">서울</option>
@@ -24,8 +24,8 @@
       </div>
 
       <!-- 현장 -->
-      <div class="flex flex-col items-start">
-        <label for="site" class="mb-2 font-bold text-[#767676]">현장</label>
+      <div class="flex flex-col items-center flex-1">
+        <label for="region" class="mb-2 font-bold text-[#767676] w-25 text-left">현장</label>
         <select id="site" class="p-1 border-b w-25 text-[#767676]">
           <option selected disabled></option>
           <option value="siteA">현장 A</option>
@@ -38,15 +38,15 @@
     <!-- 이름/전화번호 -->
     <form action="" class="flex flex-col mt-4 w-70">
       <!-- 이름 -->
-      <div class="flex items-center w-full mb-4">
-        <label for="name" class="w-24 font-bold text-right pr-5 text-[#767676]">이름</label>
-        <input type="text" id="name" placeholder="홍길동" class="text-[#999999] flex-1 p-2 border rounded-full text-left bg-[#FFFDE3]" />
+      <div class="flex flex-col w-full mb-2">
+        <label for="name" class="mb-1 font-bold text-[#767676]">이름</label>
+        <input type="text" id="name" placeholder="홍길동" class="text-[#999999] p-2 border rounded-full text-left bg-[#FFFDE3]" />
       </div>
 
       <!-- 전화번호 -->
-      <div class="flex items-center w-full mb-20">
-        <label for="phone" class="w-24 font-bold text-right pr-5 text-[#767676]">전화번호</label>
-        <input type="tel" id="phone" placeholder="01012341234" class="text-[#999999] flex-1 p-2 border rounded-full text-left bg-[#FFFDE3]" />
+      <div class="flex flex-col w-full mb-20">
+        <label for="phone" class="mb-1 font-bold text-[#767676]">전화번호</label>
+        <input type="tel" id="phone" placeholder="01012341234" class="text-[#999999] p-2 border rounded-full text-left bg-[#FFFDE3]" />
       </div>
 
       <!-- 로그인 -->

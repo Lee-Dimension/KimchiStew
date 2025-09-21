@@ -4,40 +4,50 @@
     <button class="absolute top-4 right-4 text-white text-4xl font-bold">&times;</button>
   </div>
 
-  <div class="bg-[#FFFEEF] min-h-screen">
-    <div class="w-full max-w-sm mx-auto p-5 font-sans flex flex-col h-screen">
-      <header class="relative flex justify-center items-center py-4 flex-shrink-0">
-        <button class="absolute left-0">
-          <router-link to="/safe">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#78711D" class="w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-            </svg>
-          </router-link>
-        </button>
+  <!-- 전체 배경 설정 -->
+  <div class="background-out">
+    <div class="background-in">
+      <!-- 상단 내비게이션 설정 -->
+      <header class="head-setting mb-10">
+        <!-- 홈으로 이동 -->
+        <router-link to="/safe" class="heed-text">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#78711D" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+        </router-link>
+
+        <!-- 중앙 제목 -->
         <h1 class="text-3xl font-bold text-[#78711D]">정기 안전보건교육</h1>
+
+        <!-- 우측 여백 -->
+        <p></p>
       </header>
 
-      <main class="flex-grow my-4 flex flex-col">
-        <div class="w-full h-100 bg-[#1D1A05] rounded-3xl p-5 text-white overflow-y-auto">
-          <p v-if="currentPageData.type === 'text'" v-html="currentPageData.content" class="text-left"></p>
-          <img v-if="currentPageData.type === 'image'" :src="currentPageData.content" alt="Education Content" class="max-w-full h-full object-contain cursor-pointer" @click="openFullscreen(currentPageData.content)" />
+      <!-- 중앙 교육 박스 -->
+      <div class="h-100 w-full bg-[#1D1A05] rounded-3xl p-5 text-white overflow-y-auto">
+        <p v-if="currentPageData.type === 'text'" v-html="currentPageData.content" class="text-left"></p>
+        <img v-if="currentPageData.type === 'image'" :src="currentPageData.content" alt="Education Content" class="max-w-full h-full object-contain cursor-pointer" @click="openFullscreen(currentPageData.content)" />
 
-          <div v-if="isLastPage" class="my-4 text-center flex-shrink-0 mt-30">
-            <button v-if="educationStatus !== 'valid'" @click="completeEducation" class="w-full bg-black hover:bg-zinc-900 border border-[#3A9CFF] text-[#3A9CFF] font-bold py-3 px-4 rounded-lg">교육 이수 완료</button>
-          </div>
+        <!-- 미이수자 교육 완료 버튼 -->
+        <div v-if="isLastPage" class="my-4 text-center flex-shrink-0 mt-30">
+          <button v-if="educationStatus !== 'valid'" @click="completeEducation" class="w-full bg-black hover:bg-zinc-900 border border-[#3A9CFF] text-[#3A9CFF] font-bold py-3 px-4 rounded-lg">교육 이수 완료</button>
         </div>
-      </main>
+      </div>
 
-      <footer class="flex justify-between items-center w-full py-4 flex-shrink-0">
-        <button @click="prevPage" :disabled="isFirstPage" class="bg-black text-white w-14 h-14 rounded-full flex items-center justify-center disabled:opacity-50">
+      <!-- 하단 페이지 네비게이션 -->
+      <footer class="page-box">
+        <!-- 페이지 좌측 -->
+        <button @click="prevPage" :disabled="isFirstPage" class="page-button">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
           </svg>
         </button>
 
+        <!-- 페이지 인덱스 -->
         <p class="text-lg font-bold text-[#78711D]">{{ currentPageIndex + 1 }} / {{ courseData.length }}</p>
 
-        <button @click="nextPage" :disabled="isLastPage" class="bg-black text-white w-14 h-14 rounded-full flex items-center justify-center disabled:opacity-50">
+        <!-- 페이지 우측 -->
+        <button @click="nextPage" :disabled="isLastPage" class="page-button">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
           </svg>
@@ -51,37 +61,31 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
-// --- Course Data (Moved from external file) ---
+// 교육 자료
 const courseData = [
   {
     type: 'image',
     content: `${import.meta.env.BASE_URL}safe/safe1.jpg`,
-    style: 'height: auto; max-height: 100%; width: auto; max-width: 100%; object-fit: contain;',
   },
   {
     type: 'image',
     content: `${import.meta.env.BASE_URL}safe/safe2.jpg`,
-    style: 'height: auto; max-height: 100%; width: auto; max-width: 100%; object-fit: contain;',
   },
   {
     type: 'image',
     content: `${import.meta.env.BASE_URL}safe/safe3.jpg`,
-    style: 'height: auto; max-height: 100%; width: auto; max-width: 100%; object-fit: contain;',
   },
   {
     type: 'image',
     content: `${import.meta.env.BASE_URL}safe/safe4.jpg`,
-    style: 'height: auto; max-height: 100%; width: auto; max-width: 100%; object-fit: contain;',
   },
   {
     type: 'image',
     content: `${import.meta.env.BASE_URL}safe/safe5.jpg`,
-    style: 'height: auto; max-height: 100%; width: auto; max-width: 100%; object-fit: contain;',
   },
   {
     type: 'image',
     content: `${import.meta.env.BASE_URL}safe/safe6.jpg`,
-    style: 'height: auto; max-height: 100%; width: auto; max-width: 100%; object-fit: contain;',
   },
   {
     type: 'text',
@@ -101,12 +105,10 @@ const courseData = [
   {
     type: 'image',
     content: `${import.meta.env.BASE_URL}safe/safe7.jpg`,
-    style: 'height: auto; max-height: 100%; width: auto; max-width: 100%; object-fit: contain;',
   },
   {
     type: 'image',
     content: `${import.meta.env.BASE_URL}safe/safe8.jpg`,
-    style: 'height: auto; max-height: 100%; width: auto; max-width: 100%; object-fit: contain;',
   },
   {
     type: 'text',
@@ -114,9 +116,12 @@ const courseData = [
   },
 ]
 
-// --- User and Education Status Logic ---
+// 사용자, 교육 이수 상태 로직
 const router = useRouter()
-const user = computed(() => { const storedUser = sessionStorage.getItem('loggedInUser'); return storedUser ? JSON.parse(storedUser) : null })
+const user = computed(() => {
+  const storedUser = sessionStorage.getItem('loggedInUser')
+  return storedUser ? JSON.parse(storedUser) : null
+})
 
 const educationStatus = computed(() => {
   if (!user.value || !user.value.educationCompletionDate) return 'none'
@@ -140,7 +145,7 @@ const completeEducation = () => {
   }
 }
 
-// --- Page Viewer Logic ---
+// 페이지 뷰어 로직
 const currentPageIndex = ref(0)
 const isFullscreen = ref(false)
 const fullscreenContent = ref('')
@@ -165,30 +170,9 @@ const openFullscreen = (imageUrl) => {
 const closeFullscreen = () => {
   isFullscreen.value = false
 }
-
-// --- Lifecycle Hook ---
-
 </script>
 
 <style scoped>
-.font-sans {
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    'Noto Sans',
-    sans-serif,
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol',
-    'Noto Color Emoji';
-}
-
-/* 스크롤바 디자인을 위한 커스텀 스타일 */
 .overflow-y-auto::-webkit-scrollbar {
   width: 8px;
 }

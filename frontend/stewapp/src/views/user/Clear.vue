@@ -1,17 +1,26 @@
 <template>
-  <div class="bg-[#FFFEEF] min-h-screen">
-    <div class="w-full max-w-sm mx-auto p-5 font-sans">
-      <header class="relative flex justify-center items-center py-4 mb-10">
-        <router-link to="/main" class="absolute left-0">
+  <!-- 전체 배경 설정 -->
+  <div class="background-out">
+    <div class="background-in">
+      <!-- 상단 내비게이션 설정 -->
+      <header class="head-setting mb-10">
+        <!-- 홈으로 이동 -->
+        <router-link to="/main" class="heed-text">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#78711D" class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
           </svg>
         </router-link>
-        <h1 class="text-4xl font-bold text-[#78711D]">사고조치</h1>
+
+        <!-- 중앙 제목 -->
+        <h1 class="text-3xl font-bold text-[#78711D]">사고조치</h1>
+
+        <!-- 우측 여백 -->
+        <p></p>
       </header>
 
+      <!-- 중앙 선택 박스 -->
       <main class="grid grid-cols-2 gap-4">
-        <router-link v-for="item in accidentTypes" :key="item.name" :to="item.link" class="relative flex items-center justify-center bg-[#1D1A05] rounded-3xl aspect-square cursor-pointer">
+        <router-link v-for="item in accidentTypes" :key="item.name" :to="item.link" class="flex items-center justify-center bg-[#1D1A05] rounded-3xl aspect-square cursor-pointer">
           <img :src="item.img" :alt="item.name" />
         </router-link>
       </main>
@@ -35,25 +44,6 @@ const accidentTypes = ref([
 </script>
 
 <style scoped>
-/* 기본 폰트 설정을 위해 추가 (필요 시 프로젝트 전역 폰트로 대체) */
-.font-sans {
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    'Noto Sans',
-    sans-serif,
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol',
-    'Noto Color Emoji';
-}
-
-/* 스크롤바 디자인을 위한 커스텀 스타일 */
 .overflow-y-auto::-webkit-scrollbar {
   width: 8px;
 }

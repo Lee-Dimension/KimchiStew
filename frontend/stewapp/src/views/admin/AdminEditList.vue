@@ -1,35 +1,42 @@
 <template>
-  <div class="bg-[#FFFEEF] min-h-screen">
-    <div class="w-full max-w-sm mx-auto p-8 font-sans flex flex-col h-screen">
-      <header class="relative flex justify-center items-center py-4 mb-10">
-        <button class="absolute left-0">
-          <router-link to="/admin">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#78711D" class="w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-            </svg>
-          </router-link>
-        </button>
-        <h1 class="text-4xl font-bold text-[#78711D]">명단 관리</h1>
+  <!-- 전체 배경 설정 -->
+  <div class="background-out">
+    <div class="background-in">
+      <!-- 상단 내비게이션 설정 -->
+      <header class="head-setting mb-10">
+        <!-- 홈으로 이동 -->
+        <router-link to="/admin" class="heed-text">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#78711D" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+        </router-link>
+
+        <!-- 중앙 제목 -->
+        <h1 class="text-3xl font-bold text-[#78711D]">명단 관리</h1>
+
+        <!-- 우측 여백 -->
+        <p></p>
       </header>
 
       <main class="flex-grow flex flex-col space-y-3">
-        <div class="flex-grow w-full bg-[#1D1A05] rounded-xl p-6 flex flex-col h-40">
-          <h2 class="text-xl font-bold text-[#FFEC17] mb-4 text-center">지역 선택</h2>
-          <div class="grid grid-cols-2 gap-2 overflow-y-auto flex-grow">
-            <div v-for="region in regions" :key="region.value" @click="selectRegion(region.value)" :class="['py-2 px-4 rounded-md cursor-pointer text-center h-auto w-full flex items-center justify-center', selectedRegion === region.value ? 'bg-[#FFFDE3] text-[#1D1A05]' : 'bg-gray-700 text-white hover:bg-gray-600']">
+        <div class="brown-box flex-grow flex-col p-2 h-40">
+          <h2 class="text-xl font-bold text-[#FFEC17] pt-2 mb-4 text-center">지역 선택</h2>
+          <div class="grid grid-cols-3 gap-2 overflow-y-auto flex-grow">
+            <div v-for="region in regions" :key="region.value" @click="selectRegion(region.value)" :class="['p-2 rounded-md cursor-pointer text-center h-15 w-20 flex items-center justify-center border', selectedRegion === region.value ? 'bg-black text-[#3A9CFF] border-[#3A9CFF]' : 'bg-gray-100 text-[#1D1A05] hover:bg-[#FFFDE3] border-[#DCD7B8]']">
               {{ region.name }}
             </div>
           </div>
         </div>
 
-        <div class="flex-grow w-full bg-[#1D1A05] rounded-3xl p-6 flex flex-col mt-4 h-40">
+        <!-- 현장 명단 -->
+        <div class="brown-box flex-grow flex-col p-6 h-60">
           <h2 class="text-xl font-bold text-[#FFEC17] mb-4 text-center">
             {{ selectedRegion ? selectedRegion + ' 현장 명단' : '현장 명단' }}
           </h2>
           <div class="overflow-y-auto flex-grow">
             <template v-if="filteredUsers.length > 0">
-              <div v-for="user in filteredUsers" :key="user.id" @click="selectUser(user)" :class="['p-2 mb-2 rounded-md cursor-pointer', selectedUser && selectedUser.id === user.id ? 'bg-[#FFFDE3] text-[#1D1A05]' : 'bg-gray-700 text-white hover:bg-gray-600']">
-                <p>현장: {{ user.site }}</p>
+              <div v-for="user in filteredUsers" :key="user.id" @click="selectUser(user)" :class="['button-click', selectedUser && selectedUser.id === user.id ? 'button-click-before' : 'button-click-after']">
+                <p class="mr-10">현장: {{ user.site }}</p>
                 <p>이름: {{ user.name }}</p>
               </div>
             </template>

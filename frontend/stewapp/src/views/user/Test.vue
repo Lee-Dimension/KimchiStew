@@ -1,28 +1,44 @@
 <template>
-  <div class="bg-[#FFFEEF] min-h-screen">
-    <div class="w-full max-w-sm mx-auto p-5 font-sans flex flex-col h-screen">
-      <header class="relative flex justify-center items-center py-4 mb-10">
-        <router-link to="/safe" class="absolute left-0">
+  <!-- 전체 배경 설정 -->
+  <div class="background-out">
+    <div class="background-in">
+      <!-- 상단 내비게이션 설정 -->
+      <header class="head-setting mb-16">
+        <!-- 홈으로 이동 -->
+        <router-link to="/safe" class="heed-text">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#78711D" class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
           </svg>
         </router-link>
-        <h1 class="text-4xl font-bold text-[#78711D]">사고조치</h1>
+
+        <!-- 중앙 제목 -->
+        <h1 class="text-3xl font-bold text-[#78711D]">안전 시험</h1>
+
+        <!-- 우측 여백 -->
+        <p></p>
       </header>
 
+      <!-- 시험 본문 -->
       <main class="flex flex-col flex-grow">
+        <!-- 시험지 -->
         <div v-if="currentQuestion < questions.length" class="flex flex-col flex-grow">
-          <div class="w-full bg-[#1D1A05] rounded-3xl p-5 text-white overflow-y-auto text-center mb-4 flex-grow">
+          <!-- 시험 박스 -->
+          <div class="brown-box text-white px-10 h-50 select-none">
             <h2 class="text-2xl font-bold mb-4">{{ questions[currentQuestion].question }}</h2>
           </div>
-          <div class="grid grid-cols-2 gap-4 my-5 flex-grow">
+
+          <!-- 답안 버튼 -->
+          <div class="grid grid-cols-2 gap-4 my-5 flex-grow h-50">
             <button v-for="(option, index) in questions[currentQuestion].options" :key="index" @click="checkAnswer(index)" :class="['py-5 border rounded-md cursor-pointer', selectedOptionIndex === index ? 'bg-black text-[#3A9CFF] border-[#3A9CFF]' : 'bg-gray-100 border-gray-300 text-black hover:bg-gray-200']">
               {{ option }}
             </button>
           </div>
+          <!-- 다음 버튼 -->
           <button @click="nextQuestion" :disabled="selectedOptionIndex === null" class="w-full px-5 py-3 bg-black text-[#3A9CFF] rounded-md cursor-pointer border border-[#3A9CFF] disabled:bg-gray-400 disabled:text-white disabled:cursor-not-allowed disabled:border-none mt-auto">다음 문제</button>
         </div>
-        <div v-else class="flex flex-col flex-grow justify-between">
+
+        <!-- 시험 결과 -->
+        <div v-else class="flex flex-col flex-grow justify-between mt-25">
           <div class="text-center my-auto">
             <h2 class="text-4xl font-bold mb-4">시험 완료!</h2>
             <p class="text-3xl font-semibold">최종 점수 : {{ score }}점</p>
@@ -30,7 +46,7 @@
               {{ score >= 80 ? '합격' : '불합격' }}
             </p>
           </div>
-          <button @click="finishTestAndSaveResult" class="w-full mb-10 px-5 py-3 bg-[#FFEC17] text-[#1D1A05] rounded-md cursor-pointer">홈으로</button>
+          <button @click="finishTestAndSaveResult" class="flex justify-center items-center text-lg w-full mt-35 p-3 border bg-[#FFEC17] font-bold rounded-2xl cursor-pointer">홈으로</button>
         </div>
       </main>
     </div>
@@ -106,7 +122,6 @@ const checkAnswer = (selectedIndex) => {
 }
 
 const nextQuestion = () => {
-  // Score the current question based on selectedOptionIndex
   if (selectedOptionIndex.value !== null) {
     if (selectedOptionIndex.value === questions.value[currentQuestion.value].correct) {
       score.value += 10
@@ -114,7 +129,7 @@ const nextQuestion = () => {
   }
 
   currentQuestion.value++
-  selectedOptionIndex.value = null // Reset for next question
+  selectedOptionIndex.value = null
 }
 
 const finishTestAndSaveResult = () => {
@@ -123,9 +138,9 @@ const finishTestAndSaveResult = () => {
   const storedUser = sessionStorage.getItem('loggedInUser')
   if (storedUser) {
     const user = JSON.parse(storedUser)
-    user.test = testResult // Update the test status
-    sessionStorage.setItem('loggedInUser', JSON.stringify(user)) // Save back to sessionStorage
+    user.test = testResult
+    sessionStorage.setItem('loggedInUser', JSON.stringify(user))
   }
-  router.push('/safe') // Navigate back to Safety page
+  router.push('/safe')
 }
 </script>

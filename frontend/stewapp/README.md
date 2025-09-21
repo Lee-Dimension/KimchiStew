@@ -1,29 +1,8 @@
-# stewapp
+<관리자>
+ID : admin
+Password : admin
 
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+<근로자>
+이름 : 홍길동 / 전화번호 : 01012341234
+이름 : 김부산 / 전화번호 : 01010101010
+이름 : 김인천 / 전화번호 : 01001010101

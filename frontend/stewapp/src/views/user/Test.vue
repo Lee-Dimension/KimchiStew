@@ -46,7 +46,9 @@
               {{ score >= 80 ? '합격' : '불합격' }}
             </p>
           </div>
-          <button @click="finishTestAndSaveResult" class="flex justify-center items-center text-lg w-full mt-35 p-3 border bg-[#FFEC17] font-bold rounded-2xl cursor-pointer">홈으로</button>
+          <button @click="finishTestAndSaveResult" :disabled="submitting" class="flex justify-center items-center text-lg w-full mt-35 p-3 border bg-[#FFEC17] font-bold rounded-2xl cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+            {{ submitting ? '저장 중...' : '홈으로' }}
+          </button>
         </div>
       </main>
     </div>
@@ -132,15 +134,52 @@ const nextQuestion = () => {
   selectedOptionIndex.value = null
 }
 
-const finishTestAndSaveResult = () => {
-  const testResult = score.value >= 80 ? 'pass' : 'nonepass'
+const submitting = ref(false)
 
-  const storedUser = sessionStorage.getItem('loggedInUser')
-  if (storedUser) {
-    const user = JSON.parse(storedUser)
-    user.test = testResult
-    sessionStorage.setItem('loggedInUser', JSON.stringify(user))
+function formatTodayYYYYMMDD() {
+  const d = new Date()
+  const y = String(d.getFullYear())
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${dd}`
+}
+
+const finishTestAndSaveResult = async () => {
+  if (submitting.value) return
+  submitting.value = true
+
+  const test_status = score.value >= 80 ? 'pass' : 'nonepass'
+  const payload = test_status === 'pass' ? { test_status, pass_date: formatTodayYYYYMMDD() } : { test_status }
+
+  try {
+    const res = await fetch('http://localhost:8080/api/user/test', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify(payload),
+    })
+
+    if (!res.ok) {
+      alert('시험 결과 저장에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      return
+    }
+
+    // 로컬 세션 동기화(선택적, Safety.vue는 서버 상태를 조회함)
+    const storedUser = sessionStorage.getItem('loggedInUser')
+    if (storedUser) {
+      const user = JSON.parse(storedUser)
+      user.test = test_status
+      sessionStorage.setItem('loggedInUser', JSON.stringify(user))
+    }
+
+    router.push('/safe')
+  } catch (e) {
+    alert('네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+  } finally {
+    submitting.value = false
   }
-  router.push('/safe')
 }
 </script>

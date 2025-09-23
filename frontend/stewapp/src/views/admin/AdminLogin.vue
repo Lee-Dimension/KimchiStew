@@ -32,7 +32,7 @@
             <div v-else class="mb-5"></div>
 
             <!-- 로그인 -->
-            <button type="submit" :disabled="isButtonDisabled" :class="{ 'bg-gray-300': isButtonDisabled, 'bg-[#FFEC17] hover:bg-yellow-300': !isButtonDisabled }" class="login-button">로그인</button>
+            <button type="submit" :disabled="isButtonDisabled || submitting" :class="{ 'bg-gray-300': isButtonDisabled || submitting, 'bg-[#FFEC17] hover:bg-yellow-300': !isButtonDisabled && !submitting }" class="login-button">{{ submitting ? '로그인 중...' : '로그인' }}</button>
           </form>
         </div>
       </main>
@@ -43,30 +43,46 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { admin } from '@/js/admin.js'
 
 const router = useRouter()
 
 const id = ref('')
 const password = ref('')
 const loginError = ref(false)
+const submitting = ref(false)
 
 const isButtonDisabled = computed(() => {
   return !id.value || !password.value
 })
 
-const login = () => {
-  if (isButtonDisabled.value) {
-    return
-  }
+const login = async () => {
+  if (isButtonDisabled.value || submitting.value) return
+  submitting.value = true
+  loginError.value = false
 
-  const adminUser = id.value === admin[0].id && password.value === admin[0].password
+  try {
+    const res = await fetch('http://localhost:8080/api/admin/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({ id: id.value, password: password.value }),
+    })
 
-  if (adminUser) {
-    router.push('/admin')
+    if (!res.ok) {
+      loginError.value = true
+      return
+    }
+
+    // 성공 시 라우팅 및 가드용 로컬 스토리지 설정
     localStorage.setItem('loggedInAdminId', id.value)
-  } else {
+    router.push('/admin')
+  } catch (e) {
     loginError.value = true
+  } finally {
+    submitting.value = false
   }
 }
 </script>

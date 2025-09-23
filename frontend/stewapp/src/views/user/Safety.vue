@@ -78,62 +78,77 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, onActivated } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const user = computed(() => {
-  const storedUser = sessionStorage.getItem('loggedInUser')
-  return storedUser ? JSON.parse(storedUser) : null
-})
+// 서버에서 내려오는 상태 원본
+const educationCompletionDateStr = ref('none') // 'YYYY-MM-DD' 또는 'none'
+const testRaw = ref('none') // 'none' | 'pass' | 'nonepass'
+
+// 팝업
 const showPopup = ref(false)
+const popupMessage = ref('')
 
+// 기본 교육 이수 여부
 const basicEducationStatus = computed(() => {
-  if (user.value && user.value.educationCompletionDate) {
-    return 'valid'
-  }
-  return 'none'
+  return educationCompletionDateStr.value && educationCompletionDateStr.value !== 'none' ? 'valid' : 'none'
 })
 
+// 정기교육 유효성 (이수일 + 3개월)
 const regularEducationStatus = computed(() => {
-  if (!user.value || !user.value.educationCompletionDate) {
-    return 'none'
-  }
+  const str = educationCompletionDateStr.value
+  if (!str || str === 'none') return 'none'
 
-  const today = new Date()
-  const completionDateStr = user.value.educationCompletionDate
-  const [year, month, day] = completionDateStr.split('-').map(Number)
-  const completionDate = new Date(`20${year}`, month - 1, day)
+  const parts = str.split('-').map(Number)
+  if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) return 'none'
+  const [year, month, day] = parts
+  const completionDate = new Date(year, month - 1, day)
+  if (Number.isNaN(completionDate.getTime())) return 'none'
 
   const expiryDate = new Date(completionDate)
   expiryDate.setMonth(expiryDate.getMonth() + 3)
 
-  if (today >= expiryDate) {
-    return 'expired'
-  } else {
-    return 'valid'
-  }
+  const today = new Date()
+  return today >= expiryDate ? 'expired' : 'valid'
 })
 
+// 시험 상태
 const testStatus = computed(() => {
-  if (!user.value || !user.value.test) return 'none'
-  if (user.value.test === 'pass') return 'pass'
-  if (user.value.test === 'nonepass') return 'fail'
+  if (testRaw.value === 'pass') return 'pass'
+  if (testRaw.value === 'nonepass') return 'fail'
   return 'none'
 })
 
-const popupMessage = ref('')
-
-onMounted(() => {
-  if (user.value) {
-    if (regularEducationStatus.value === 'expired') {
-      popupMessage.value = '재교육 대상자입니다.'
-      showPopup.value = true
-    } else if (regularEducationStatus.value === 'none') {
-      popupMessage.value = '기초교육 대상자입니다.'
-      showPopup.value = true
+// 상태 조회
+onMounted(async () => {
+  try {
+    const res = await fetch('http://localhost:8080/api/user/status', {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      credentials: 'include',
+    })
+    if (res.ok) {
+      const data = await res.json()
+      educationCompletionDateStr.value = data?.educationCompletionDate ?? 'none'
+      testRaw.value = data?.test ?? 'none'
+    } else {
+      educationCompletionDateStr.value = 'none'
+      testRaw.value = 'none'
     }
+  } catch (e) {
+    educationCompletionDateStr.value = 'none'
+    testRaw.value = 'none'
+  }
+
+  // 상태 기반 안내 팝업
+  if (regularEducationStatus.value === 'expired') {
+    popupMessage.value = '재교육 대상자입니다.'
+    showPopup.value = true
+  } else if (regularEducationStatus.value === 'none') {
+    popupMessage.value = '기초교육 대상자입니다.'
+    showPopup.value = true
   }
 })
 

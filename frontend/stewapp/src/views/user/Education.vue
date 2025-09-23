@@ -30,7 +30,7 @@
 
         <!-- 미이수자 교육 완료 버튼 -->
         <div v-if="isLastPage" class="my-4 text-center flex-shrink-0 mt-30">
-          <button v-if="educationStatus !== 'valid'" @click="completeEducation" class="w-full bg-black hover:bg-zinc-900 border border-[#3A9CFF] text-[#3A9CFF] font-bold py-3 px-4 rounded-lg">교육 이수 완료</button>
+          <button v-if="educationStatus !== 'valid'" @click="completeEducation" :disabled="submitting" class="w-full bg-black hover:bg-zinc-900 disabled:opacity-60 disabled:cursor-not-allowed border border-[#3A9CFF] text-[#3A9CFF] font-bold py-3 px-4 rounded-lg">{{ submitting ? '처리 중...' : '교육 이수 완료' }}</button>
         </div>
       </div>
 
@@ -123,25 +123,70 @@ const user = computed(() => {
   return storedUser ? JSON.parse(storedUser) : null
 })
 
+// 날짜 파싱 유틸 (YY 또는 YYYY 모두 지원)
+function parseCompletionDate(str) {
+  if (!str || str === 'none') return null
+  const parts = String(str).split('-')
+  if (parts.length !== 3) return null
+  let [y, m, d] = parts
+  if (y.length === 2) y = `20${y}`
+  const year = Number(y)
+  const month = Number(m)
+  const day = Number(d)
+  if ([year, month, day].some((n) => Number.isNaN(n))) return null
+  const dt = new Date(year, month - 1, day)
+  return Number.isNaN(dt.getTime()) ? null : dt
+}
+
 const educationStatus = computed(() => {
-  if (!user.value || !user.value.educationCompletionDate) return 'none'
-  const today = new Date()
-  const [year, month, day] = user.value.educationCompletionDate.split('-').map(Number)
-  const completionDate = new Date(`20${year}`, month - 1, day)
+  const str = user.value?.educationCompletionDate
+  const completionDate = parseCompletionDate(str)
+  if (!completionDate) return 'none'
   const expiryDate = new Date(completionDate)
   expiryDate.setMonth(expiryDate.getMonth() + 3)
+  const today = new Date()
   return today >= expiryDate ? 'expired' : 'valid'
 })
 
-const completeEducation = () => {
-  if (user.value) {
+const submitting = ref(false)
+
+const completeEducation = async () => {
+  if (!user.value || submitting.value) return
+  submitting.value = true
+  try {
     const today = new Date()
-    const year = String(today.getFullYear()).slice(-2)
+    const year = String(today.getFullYear()) // YYYY
     const month = String(today.getMonth() + 1).padStart(2, '0')
     const day = String(today.getDate()).padStart(2, '0')
-    user.value.educationCompletionDate = `${year}-${month}-${day}`
+    const todayStr = `${year}-${month}-${day}`
+
+    // 서버에 교육 이수일 갱신 요청
+    const res = await fetch('http://localhost:8080/api/user/education', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({ completion_date: todayStr }),
+    })
+
+    if (!res.ok) {
+      // 실패 시 사용자에게 알림
+      alert('교육 이수 처리에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      return
+    }
+
+    // 성공 시 세션의 사용자 정보도 동기화(YYYY-MM-DD)
+    user.value.educationCompletionDate = todayStr
     sessionStorage.setItem('loggedInUser', JSON.stringify(user.value))
+
+    // 안전 교육 메인으로 이동
     router.push('/safe')
+  } catch (e) {
+    alert('네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+  } finally {
+    submitting.value = false
   }
 }
 

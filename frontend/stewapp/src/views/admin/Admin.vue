@@ -11,7 +11,7 @@
       <!-- 중앙 설정 -->
       <main class="main-setting">
         <!-- 환영인사 -->
-        <div class="flex flex-col justify-left w-full my-10 px-5 gap-2 select-none">
+        <div class="flex flex-col justify-center items-left ml-5 w-full my-10 px-5 gap-2 select-none">
           <h1 class="font-bold text-[#78711D] text-5xl">{{ adminId }}님</h1>
           <h2 class="font-bold text-[#E3D435] text-2xl">환영합니다</h2>
         </div>

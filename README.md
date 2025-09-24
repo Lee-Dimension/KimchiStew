@@ -1,4 +1,7 @@
+<img width="300" height="auto" alt="ChatGPT Image 2025년 9월 15일 오후 04" src="https://github.com/user-attachments/assets/21703a3a-3db3-4406-85fd-4fc81bf9e6b3" />
+
 # 공사장 안전관리 웹 '돌다리'
+
 ## 프로젝트 개요
 공사장 안전사고 방지 및 즉각적인 조치를 위한 시스템을 제공하는 웹/앱 개발
 
